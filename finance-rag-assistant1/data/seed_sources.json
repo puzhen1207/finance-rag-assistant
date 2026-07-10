@@ -1,0 +1,40 @@
+{
+  "sources": [
+    {
+      "title": "Saving and Investing: A Roadmap To Your Financial Security Through Saving and Investing",
+      "publisher": "U.S. Securities and Exchange Commission / Investor.gov",
+      "url": "https://www.sec.gov/files/saving-investing-roadmap.pdf",
+      "notes": "SEC investor education material about saving, investing, risk, diversification, and fraud awareness."
+    },
+    {
+      "title": "Investor.gov - Introduction to Investing",
+      "publisher": "U.S. Securities and Exchange Commission / Investor.gov",
+      "url": "https://www.investor.gov/introduction-investing",
+      "notes": "SEC retail investor education portal."
+    },
+    {
+      "title": "Your Money, Your Goals Toolkit",
+      "publisher": "Consumer Financial Protection Bureau",
+      "url": "https://www.consumerfinance.gov/consumer-tools/educator-tools/your-money-your-goals/toolkit/",
+      "notes": "CFPB consumer finance toolkit covering credit, debt, savings, and financial goals."
+    },
+    {
+      "title": "Consumer Financial Protection Bureau - Consumer Tools",
+      "publisher": "Consumer Financial Protection Bureau",
+      "url": "https://www.consumerfinance.gov/consumer-tools/",
+      "notes": "CFPB consumer finance resources for mortgages, credit cards, credit reports, debt collection, and banking."
+    },
+    {
+      "title": "Federal Reserve - Consumers & Communities",
+      "publisher": "Board of Governors of the Federal Reserve System",
+      "url": "https://www.federalreserve.gov/consumerscommunities.htm",
+      "notes": "Federal Reserve consumer and community affairs resources."
+    },
+    {
+      "title": "FINRA - Investing Basics",
+      "publisher": "Financial Industry Regulatory Authority",
+      "url": "https://www.finra.org/investors/investing/investing-basics",
+      "notes": "Investor education on investment products, risk, diversification, and markets."
+    }
+  ]
+}
