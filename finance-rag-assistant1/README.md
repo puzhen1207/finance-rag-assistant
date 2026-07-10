@@ -87,7 +87,7 @@ flowchart TD
 
 ```bash
 git clone https://github.com/your-username/finance-rag-assistant.git
-cd finance-rag-assistant
+cd finance-rag-assistant1
 ```
 
 创建虚拟环境：
