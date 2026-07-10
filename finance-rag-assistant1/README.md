@@ -18,6 +18,7 @@
 - [项目结构](#项目结构)
 - [RAG 工作流程](#rag-工作流程)
 - [快速开始](#快速开始)
+- [嵌入模型说明](#嵌入模型说明)
 - [配置说明](#配置说明)
 - [运行方式](#运行方式)
 - [PyCharm 运行](#pycharm-运行)
@@ -42,14 +43,14 @@
 
 ## 技术栈
 
-| 模块 | 技术 |
-| --- | --- |
-| 后端服务 | FastAPI、Pydantic、Uvicorn |
-| 文档解析 | pypdf、python-docx、BeautifulSoup |
-| 向量模型 | BGE-M3、sentence-transformers |
-| 检索计算 | NumPy、scikit-learn |
-| 向量存储 | SQLite |
-| 前端 | HTML、CSS、JavaScript |
+| 模块       | 技术                                   |
+| ---------- | -------------------------------------- |
+| 后端服务   | FastAPI、Pydantic、Uvicorn             |
+| 文档解析   | pypdf、python-docx、BeautifulSoup      |
+| 向量模型   | BGE-M3、sentence-transformers          |
+| 检索计算   | NumPy、scikit-learn                    |
+| 向量存储   | SQLite                                 |
+| 前端       | HTML、CSS、JavaScript                  |
 | 大模型接口 | OpenAI-compatible Chat Completions API |
 
 ## 项目结构
@@ -135,7 +136,19 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. 创建配置文件
+### 4. 准备本地嵌入模型
+
+本项目默认使用 **BGE-M3** 作为本地嵌入模型。模型文件体积较大，**不会随仓库一起上传**，需要使用者自行下载并放到本地目录。
+
+下载或准备好模型后，在 `.env` 中配置：
+
+```env
+EMBEDDING_MODEL_PATH=D:\your-path\bge-m3
+```
+
+路径需要指向包含模型文件的目录，例如该目录下通常会有 `config.json`、`tokenizer.json`、模型权重文件等。
+
+### 5. 创建配置文件
 
 ```bash
 cp .env.example .env
@@ -147,7 +160,7 @@ Windows PowerShell：
 Copy-Item .env.example .env
 ```
 
-### 5. 启动服务
+### 6. 启动服务
 
 ```bash
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
@@ -158,6 +171,36 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```text
 http://127.0.0.1:8000
 ```
+
+## 嵌入模型说明
+
+仓库中不包含 BGE-M3 模型文件。
+
+原因：
+
+- 模型文件体积较大，不适合直接提交到 GitHub。
+- 不同用户的模型存放路径不同，应通过 `.env` 配置。
+- 这样可以避免仓库过大，也更符合真实项目的部署方式。
+
+你需要自行准备 BGE-M3 模型，并在 `.env` 中设置：
+
+```env
+EMBEDDING_MODEL_PATH=/absolute/path/to/bge-m3
+```
+
+Windows 示例：
+
+```env
+EMBEDDING_MODEL_PATH=D:\models\bge-m3
+```
+
+Linux / macOS 示例：
+
+```env
+EMBEDDING_MODEL_PATH=/home/user/models/bge-m3
+```
+
+如果路径配置错误，入库或问答时会在加载嵌入模型阶段失败。
 
 ## 配置说明
 
@@ -183,7 +226,7 @@ LLM_MODEL=deepseek-chat
 
 说明：
 
-- `EMBEDDING_MODEL_PATH` 必须改成你本地 BGE-M3 模型路径。
+- `EMBEDDING_MODEL_PATH` 必须改成你本地 BGE-M3 模型路径，模型本身不包含在仓库中。
 - `LLM_API_KEY` 为空时，系统会使用基于证据片段的抽取式回答。
 - 如果接入 DeepSeek 或其他兼容 OpenAI 格式的大模型服务，需要填写 `LLM_BASE_URL`、`LLM_API_KEY` 和 `LLM_MODEL`。
 - 不要把真实 `.env` 文件提交到 GitHub。
@@ -222,29 +265,29 @@ docker compose up --build
 pip install -r requirements.txt
 ```
 
-6. 复制 `.env.example` 为 `.env`，并修改 `EMBEDDING_MODEL_PATH` 和可选的大模型配置。
-7. 新建运行配置：
+1. 复制 `.env.example` 为 `.env`，并修改 `EMBEDDING_MODEL_PATH` 和可选的大模型配置。
+2. 新建运行配置：
    - 类型：`Python`
    - Module name：`uvicorn`
    - Parameters：`app.main:app --reload --host 127.0.0.1 --port 8000`
    - Working directory：项目根目录
-8. 点击 Run，访问 `http://127.0.0.1:8000`。
+3. 点击 Run，访问 `http://127.0.0.1:8000`。
 
 ## 核心接口
 
-| 请求方法 | 接口路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/` | 前端页面 |
-| `GET` | `/api/status` | 获取知识库、向量库和模型状态 |
-| `POST` | `/api/upload` | 上传本地文档并异步入库 |
-| `POST` | `/api/ingest-url` | 从公开 URL 导入资料 |
-| `GET` | `/api/tasks/{task_id}` | 获取异步入库任务状态 |
-| `POST` | `/api/ask` | 发起 RAG 问答 |
-| `GET` | `/api/history` | 获取问答历史 |
-| `GET` | `/api/documents/{document_id}/chunks` | 获取文档分块 |
-| `POST` | `/api/documents/{document_id}/rebuild` | 重建文档索引 |
-| `DELETE` | `/api/documents/{document_id}` | 删除文档及其向量 |
-| `GET` | `/documents/{document_id}/chunks` | 文档分块可视化页面 |
+| 请求方法 | 接口路径                               | 说明                         |
+| -------- | -------------------------------------- | ---------------------------- |
+| `GET`    | `/`                                    | 前端页面                     |
+| `GET`    | `/api/status`                          | 获取知识库、向量库和模型状态 |
+| `POST`   | `/api/upload`                          | 上传本地文档并异步入库       |
+| `POST`   | `/api/ingest-url`                      | 从公开 URL 导入资料          |
+| `GET`    | `/api/tasks/{task_id}`                 | 获取异步入库任务状态         |
+| `POST`   | `/api/ask`                             | 发起 RAG 问答                |
+| `GET`    | `/api/history`                         | 获取问答历史                 |
+| `GET`    | `/api/documents/{document_id}/chunks`  | 获取文档分块                 |
+| `POST`   | `/api/documents/{document_id}/rebuild` | 重建文档索引                 |
+| `DELETE` | `/api/documents/{document_id}`         | 删除文档及其向量             |
+| `GET`    | `/documents/{document_id}/chunks`      | 文档分块可视化页面           |
 
 ## 数据存储
 
@@ -300,6 +343,7 @@ scripts/__pycache__/
 - `.venv/` 是本地虚拟环境，体积大且不可移植。
 - `storage/` 是本地向量库和问答日志。
 - `source/` 通常是本地下载的资料文件，体积可能很大，也可能不适合公开。
+- BGE-M3 等本地模型目录体积较大，不应提交到 GitHub，应由使用者自行下载并配置路径。
 - `__pycache__/` 和 `*.pyc` 是 Python 缓存文件。
 
 ## 后续规划
