@@ -107,8 +107,8 @@ flowchart TD
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/your-username/finance-rag-assistant.git
-cd finance-rag-assistant
+git clone https://github.com/your-username/finance-rag-assistant1.git
+cd finance-rag-assistant1
 ```
 
 ### 2. 创建虚拟环境
