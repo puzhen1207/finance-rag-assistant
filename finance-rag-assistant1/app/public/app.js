@@ -343,9 +343,13 @@ async function runIngest(requestFactory) {
 }
 
 async function pollIngestTask(taskId) {
-  for (let i = 0; i < 240; i += 1) {
+  const maxAttempts = 1200;
+  const intervalMs = 1000;
+  let lastTask = null;
+  for (let i = 0; i < maxAttempts; i += 1) {
     const res = await fetch(`/api/tasks/${encodeURIComponent(taskId)}`);
     const task = await res.json();
+    lastTask = task;
     if (!res.ok) {
       renderPipeline([{ step: "入库失败", status: "done", detail: task.detail || "任务不存在", metric: "error" }]);
       return { ok: false, detail: task.detail || "任务不存在", data: task };
@@ -368,9 +372,14 @@ async function pollIngestTask(taskId) {
       renderPipeline(task.pipeline || [{ step: "入库失败", status: "done", detail: task.error || "未知错误", metric: "error" }]);
       return { ok: false, detail: task.error || "入库失败", data: task };
     }
-    await new Promise((resolve) => setTimeout(resolve, 900));
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
   }
-  return { ok: false, detail: "入库任务超时" };
+  const detail = "前端等待超时，后台任务可能仍在处理。首次加载 BGE-M3 或处理大文件会比较慢，请稍后刷新知识库查看结果。";
+  renderPipeline([
+    { step: "等待超时", status: "done", detail, metric: "timeout" },
+    { step: "最后状态", status: "pending", detail: lastTask?.message || lastTask?.status || taskId, metric: `${lastTask?.progress || 0}%` },
+  ]);
+  return { ok: false, detail, data: lastTask };
 }
 
 $("askBtn").addEventListener("click", async () => {
